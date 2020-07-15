@@ -1,5 +1,5 @@
 from WVR.Kox.kox import kox
-from WVR.kv import kv
+from WVR.kv_cruz import kv
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,22 +9,24 @@ plt.rcParams['axes.unicode_minus'] = False # 解决保存图像是负号'-'显�
 plt.rcParams['xtick.direction'] = 'in'
 plt.rcParams['ytick.direction'] = 'in'
 
-v = np.linspace(10, 100, 800)
+v = np.linspace(15, 40, 800)
 p = 1013
 p_v = 7.5*293/217
-T = 300
+rho = 7.5
+p_dry = p - p_v
+T = 293
 h0 = 0
 k_v = []
 k_o = []
 
 for i in v:
-    k_v.append(kv(T,i,p,p_v))
+    k_v.append(kv(T,i,p_dry,p_v))
     k_o.append(kox(i,h0,h0,T,p))
 
 k_v = np.array(k_v)
 k_o = np.array(k_o)
     
-#plt.plot(v, k_v , label="水汽吸收系数曲线")
+plt.plot(v, k_v , label="水汽吸收系数曲线")
 plt.plot(v, k_o , label="氧气吸收系数曲线")
 plt.xlabel('频率（GHz）',fontsize=13)
 #plt.ylabel(r'水汽吸收系数（km$^{-1}\times10^{-2}$）',fontsize=13)

@@ -14,7 +14,7 @@
 
 </center>
 
-对流层延迟是空间大地测量技术中的一项重要误差源，包括湿延迟和干延迟。其中干延迟较为稳定，通过已有的模型即可得到比较准确的改正；湿延迟由于受到变化复杂的云雨等因素的影响，难以准确地使用模型量化。为了确定对流层延迟中的湿项，可采用GPS、VLBI、无线电探空仪、水汽辐射计等多种技术进行改正。
+对流层延迟是空间大地测量技术中的一项重要误差源，包括湿延迟和干延迟。其中干延迟较为稳定，通过已有的模型即可得到比较准确的改正；湿延迟由于受到变化复杂的云雨等因素的影响，难以准确地使用模型量化。为了确定对流层延迟中的湿项，可采用GPS、VLBI、无线电探空仪、射线跟踪、水汽辐射计等多种技术进行改正。
 
 水汽辐射计虽然价格昂贵，但时间分辨率高，如果测量误差较小，则可以提升空间大地测量的精度。本文收集了一种双通道式水汽辐射计的观测数据、并址的天马望远镜参与的VLBI解算得到的湿项延迟以及GPS SHAO站的观测文件数据。通过这三者得到的湿延迟进行对比研究，对该双通道式的水汽辐射计进行了精度评估。
 
@@ -24,25 +24,12 @@
 
 </center>
 
-本文使用上海天马望远镜处的双通道式水汽辐射计，两个通道频率分别为23.8GHz和31.2GHz。
-大气微波辐射方程，
+本文使用上海天马望远镜处的双通道式水汽辐射计，两个通道频率分别为23.8GHz和31.2GHz。水汽辐射计的直接测定量是亮温度$T_B$，即物体的辐射能量用同辐射量的黑体温度表示。水汽辐射计使用亮温度对大气对流层湿延迟进行反演。仪器天线口的亮温由大气微波辐射方程给出，
 <center>
 
 $
 \displaystyle{T_B = T_Se^{-\tau_{\infty}}+\int_0^{\infty}T\alpha e^{-\tau}ds}
 $
-</center>
-
-大气吸收系数$\alpha$,
-<center>
-
-$
-\alpha = \alpha_v + \alpha_o + \alpha_l
-$
-</center>
-
-$\alpha_w$为水汽吸收系数，$\alpha_o$为氧气吸收系数，$\alpha_l$为液态水吸收系数。
-<center>
 
 $
 \displaystyle\tau_{\infty}=\int_0^{\infty}\alpha ds
@@ -53,6 +40,17 @@ $
 $
 </center>
 
+式中，$T_S$为宇宙背景辐射亮温度，$\tau$为大气透过率，$T$为气温。
+
+$\alpha$为大气吸收系数，它由水汽吸收系数$\alpha_w$，氧气吸收系数$\alpha_o$以及液态水吸收系数$\alpha_l$组成，
+<center>
+
+$
+\alpha = \alpha_v + \alpha_o + \alpha_l
+$
+</center>
+
+
 由大气微波辐射方程可得到，
 <center>
 
@@ -60,6 +58,8 @@ $
 \tau = ln\left(\dfrac{T_m-T_s}{T_m-T_B}\right)
 $
 </center>
+
+式中，$T_m$为大气平均辐射温度。
 
 对于双通道水汽辐射计，假定通道频率为$f_1$、$f_2$，对应大气吸收系数分别为$\alpha_1$、$\alpha_2$，则对应的大气不透明度$\tau_1$、$\tau_2$可写为：
 <center>
@@ -87,12 +87,15 @@ $
 w(s)=\dfrac{T}{\rho_v}\left(\dfrac{\alpha_{v1}}{f_1^2}-\dfrac{\alpha_{v2}}{f_2^2}\right)
 $
 
-$
-\displaystyle\tau_d=\int_0^{\infty}\left(\dfrac{\alpha_{o1}}{f_1^2}-\dfrac{\alpha_{o2}}{f_2^2}\right)ds+\int_0^{\infty}\left(\dfrac{\alpha_{l1}}{f_1^2}-\dfrac{\alpha_{l2}}{f_2^2}\right)ds
-$
+$$
+\begin{aligned}
+\displaystyle\tau_d & =\int_0^{\infty}\left(\dfrac{\alpha_{o1}}{f_1^2}-\dfrac{\alpha_{o2}}{f_2^2}\right)ds+\int_0^{\infty}\left(\dfrac{\alpha_{l1}}{f_1^2}-\dfrac{\alpha_{l2}}{f_2^2}\right)ds \\
+& \approx \int_0^{\infty}\left(\dfrac{\alpha_{o1}}{f_1^2}-\dfrac{\alpha_{o2}}{f_2^2}\right)ds
+\end{aligned}
+$$
 </center>
 
-方程中，权函数$w(s)$在某些特定的频率对上可看作近似与高度无关的常数$W(s)$。则上述方程可改写成
+式中，$\rho_v$为水汽密度。方程中，权函数$w(s)$在某些特定的频率对上可看作近似与高度无关的常数$W(s)$。则上述方程可改写成
 <center>
 
 $
@@ -139,3 +142,5 @@ $
 \tau_2 = ln \left(\dfrac{T_m-T_s}{T_m-T_{B_2}}\right)
 $
 </center>
+
+$T_{B_1}$、$T_{B_1}$分别为两个通道的亮温度。
