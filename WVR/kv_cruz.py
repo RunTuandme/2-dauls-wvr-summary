@@ -14,7 +14,7 @@ def kv(T, v, p, p_v):
     p_v(pressure of wet air)(hPa or mbar) 
     '''
     v0 = 22.23510 # GHz
-    delta_v = 2.784e-3 * ( p*((300/T)**0.6)+4.8*p_v*((300/T)**1.1) )
+    delta_v = 2.784e-3 * ( p*((300/T)**0.6) + 4.8*p_v*((300/T)**1.1) )
     m1 = 1 / ( ((v-v0)**2)+(delta_v ** 2) )
     m2 = 1 / ( ((v+v0)**2)+(delta_v ** 2) )
     x1 = m1 + m2

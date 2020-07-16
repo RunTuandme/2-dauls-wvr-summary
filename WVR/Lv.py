@@ -33,7 +33,7 @@ def tau_d(v1, v2, h0, T0, P0):
         h = h0 + i * 5 / 1000
         kox1 = kox(v1, h0, h, T0, P0)
         kox2 = kox(v2, h0, h, T0, P0)
-        sum += (kox1 / v1**2 - kox2 / v2**2) * h
+        sum += (kox1 / v1**2 - kox2 / v2**2) * 5e-3
     return sum
 
 def Lv(TB1, TB2, v1, v2, p_v, T0, P0, h0):
@@ -50,7 +50,7 @@ def Lv(TB1, TB2, v1, v2, p_v, T0, P0, h0):
     tau1 = tau(TB1, T0)
     tau2 = tau(TB2, T0)
 
-    K = 1.763e-6
+    K = 1.763e-3
     Wm = W_m(T0, v1, v2, P0, p_v)
     taud = tau_d(v1, v2, h0, T0, P0)
 
@@ -60,7 +60,7 @@ def Lv(TB1, TB2, v1, v2, p_v, T0, P0, h0):
 
     result = b0 + b1*tau1 + b2*tau2
 
-    return result
+    return [b0, b1, b2, result]
 
 if __name__ == '__main__':
     '''test'''
