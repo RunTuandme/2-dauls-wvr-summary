@@ -65,9 +65,10 @@ def Lv(TB1, TB2, v1, v2, p_v, T0, P0, h0):
 if __name__ == '__main__':
     '''test'''
     from e0 import *
-    T0 = 3.9 + 273.15
-    pv = e0(T0) * 0.699
-    P0 = 1037.6
+    T0 = 9.2 + 273.15
+    pv = e0(T0) * 0.929
+    P0 = 1026.3
     h0 = 49.2 / 1000
-    delay = Lv(26.7822, 37.3774, 23.8, 31.2, pv, T0, P0, h0)
-    print (delay)
+    re = Lv(27.2514, 29.8020, 23.8, 31.2, pv, T0, P0, h0)
+    
+    print (re)
