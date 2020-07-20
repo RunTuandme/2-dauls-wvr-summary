@@ -11,6 +11,7 @@ from math import log
 def tau(TB, T0):
     Tc = 2.9
     Tm = T_m(T0)
-    result = log((Tm-Tc)/(Tm-TB))
+    inm = (Tm-Tc) / (Tm-TB)
+    result = log(abs(inm))
 
     return result
