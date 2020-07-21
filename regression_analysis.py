@@ -1,10 +1,10 @@
-from WVR.tau import tau
+from WVR.tau_ import tau
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
-import os
 from tqdm import tqdm
+import os
 import time
 
 def t2s(t):

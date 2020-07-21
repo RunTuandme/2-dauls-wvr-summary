@@ -9,9 +9,13 @@
 #           h0(height above the sea level for the station)(km)
 # Output :  Lv(wet delay)(mm)
 
-from tau import tau
+from tau_ import tau
 from kv import *
 from Kox.kox import *
+
+def t2s(t):
+    h,m,s = t.strip().split(":")
+    return float(h) * 3600 + float(m) * 60 + float(s)
 
 def W_m(T0, v1, v2, P0, p_v):
     '''
