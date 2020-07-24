@@ -10,7 +10,7 @@
 # Output :  Lv(wet delay)(mm)
 
 from tau_ import tau
-from kv import *
+from kv_cruz import *
 from Kox.kox import *
 
 def t2s(t):

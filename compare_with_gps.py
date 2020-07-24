@@ -105,12 +105,12 @@ if __name__ == '__main__':
 
     filelist = []
 
-    path = "raw_data"
+    path = "../WVR_raw_data"
 
     data_year = '2018'
-    data_month = '11'
+    data_month = '10'
     data_day_start = '01'
-    data_day_end = '30'
+    data_day_end = '31'
 
     date_records = os.listdir(path)
 

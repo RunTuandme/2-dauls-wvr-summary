@@ -86,21 +86,33 @@ import sys
 sys.path.append('d:/work/two_daul/WVR')
 
 from tqdm import tqdm
-from WVR.Lv import Lv
+# from WVR.Lv import Lv
 from WVR.e0 import e0
 from WVR.tau_ import tau
 import matplotlib.pyplot as plt
 import os
 from multiprocessing import Pool
+from ctypes import *
 
+dll = CDLL('zwd.dll')
+dll.Lv.argtypes = [c_double] * 8    # 指定传入参数类型
+dll.Lv.restype = c_double           # 指定输出结果类型
 
 def t2s(t: str):
     h,m,s = t.strip().split(":")
     return float(h) * 3600 + float(m) * 60 + float(s)
 
 def Mutiwork(Team: tuple) -> float:
-    lv = Lv(Team[0], Team[1], 23.8, 31.2, Team[2], Team[3], Team[4], 0.0492)
-    return lv[3]
+    a1 = c_double(Team[0])
+    a2 = c_double(Team[1])
+    a3 = c_double(23.8)
+    a4 = c_double(31.2)
+    a5 = c_double(Team[2])
+    a6 = c_double(Team[3])
+    a7 = c_double(Team[4])
+    a8 = c_double(0.0492)
+    lv = dll.Lv(a1, a2, a3, a4, a5, a6, a7, a8)
+    return lv
 
 if __name__ == '__main__':
 
@@ -112,7 +124,7 @@ if __name__ == '__main__':
     WVR_P0 = []
     WVR_e = []      # 相对湿度
 
-    file = 'raw_data/20181101/SH_FSJ_D1811010004.txt'
+    file = '../WVR_raw_data/20180217/SH_FSJ_D1802170004.txt'
     with open(file,'r') as f_wvr:
         read = False
         for line in f_wvr:
@@ -166,9 +178,9 @@ if __name__ == '__main__':
     plt.ylabel('Zenith wet path delay(mm)')
     plt.xlabel('time(s)')
     plt.legend()
-    plt.savefig('prod_vs_cal/181101.png') 
+    plt.savefig('prod_vs_cal/180217_cruz.png') 
 
-    with open('prod_vs_cal/181101.txt','w') as f_out:
+    with open('prod_vs_cal/180217_cruz.txt','w') as f_out:
         for i in WVR_Lv:
             f_out.write(str(i) + '\n')
     f_out.close()
