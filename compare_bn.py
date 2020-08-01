@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 """ 
 import sys
 sys.path.append('d:/work/two_daul/WVR')
@@ -86,7 +88,7 @@ import sys
 sys.path.append('d:/work/two_daul/WVR')
 
 from tqdm import tqdm
-# from WVR.Lv import Lv
+# from WVR.Lv import Lv             # python版的湿延迟计算库
 from WVR.e0 import e0
 from WVR.tau_ import tau
 import matplotlib.pyplot as plt
@@ -94,7 +96,8 @@ import os
 from multiprocessing import Pool
 from ctypes import *
 
-dll = CDLL('zwd.dll')
+dll = CDLL('zwd.dll')             # windows版
+# dll = CDLL('libzwd.so')             # linux版
 dll.Lv.argtypes = [c_double] * 8    # 指定传入参数类型
 dll.Lv.restype = c_double           # 指定输出结果类型
 
@@ -124,8 +127,8 @@ if __name__ == '__main__':
     WVR_P0 = []
     WVR_e = []      # 相对湿度
 
-    file = '../WVR_raw_data/20180217/SH_FSJ_D1802170004.txt'
-    with open(file,'r') as f_wvr:
+    file = '../RawDatas/WVR_raw_data/20180217/SH_FSJ_D1802170004.txt'
+    with open(file,'r',encoding='gbk') as f_wvr:
         read = False
         for line in f_wvr:
             if line in ['\n','\r\n']:
