@@ -1,3 +1,5 @@
+import datetime
+
 def get_igs_spd(ista, iyear, imon, iday, inp_el, inp_az, idir):
     '''
     --- Function:
@@ -227,20 +229,38 @@ def get_igs_spd(ista, iyear, imon, iday, inp_el, inp_az, idir):
     hours=range(0,24,3)
     return hours, tpd, wpd
 
+def dateRange(beginDate, endDate):
+    dates = []
+    dt = datetime.datetime.strptime(beginDate, "%Y%m%d")
+    date = beginDate[:]
+    while date <= endDate:
+        dates.append(date)
+        dt = dt + datetime.timedelta(1)
+        date = dt.strftime("%Y%m%d")
+    return dates
+
 if __name__ == '__main__':
     
     path_data_save = '../RawDatas/spa_data/'
     path_data_anly = '../Estimate/spa_result/'
 
-    from datetime import date
-    from dateutil.rrule import rrule, DAILY
+    date_start = '20180127'
+    date_end = '20180130'
 
-    time_start = date(2016, 6, 1)
-    time_end = date(2016, 6, 15)
- 
-    for dt in rrule(DAILY, dtstart=time_start, until=time_end):
-        print dt.strftime("%Y-%m-%d")
+    from tqdm import tqdm
 
-    """ a = get_igs_spd(415,2019,1,1,1,1,path)
+    for dt in dateRange(date_start, date_end):
 
-    print (a) """
+        print '---> Now is dealing with: '+str(dt)
+
+        dy = int(dt[:4])
+        dm = int(dt[4:6])
+        dd = int(dt[6:])
+
+        res = get_igs_spd(415, dy, dm, dd, 1, 1, path_data_save+str(dt)+'/')
+        
+        with open(path_data_anly+dt+'.txt', 'w') as file_out:
+            file_out.write('time(h)\ttpd\twpd')
+            for i in tqdm(zip(res[0], res[1], res[2])):
+                file_out.write('\n'+str(i[0])+'\t'+str(i[1])+'\t'+str(i[2]))
+        file_out.close()
