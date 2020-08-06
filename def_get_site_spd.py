@@ -244,10 +244,11 @@ if __name__ == '__main__':
     path_data_save = '../RawDatas/spa_data/'
     path_data_anly = '../Estimate/spa_result/'
 
-    date_start = '20180127'
-    date_end = '20180130'
+    date_start = '20190101'
+    date_end = '20190130'
 
     from tqdm import tqdm
+    import time
 
     for dt in dateRange(date_start, date_end):
 
@@ -264,3 +265,6 @@ if __name__ == '__main__':
             for i in tqdm(zip(res[0], res[1], res[2])):
                 file_out.write('\n'+str(i[0])+'\t'+str(i[1])+'\t'+str(i[2]))
         file_out.close()
+
+        for i in tqdm(range(300),ncols=80):
+            time.sleep(1)

@@ -41,12 +41,11 @@ def ReadGPSFile(filename: str = None):
     openfile = '../RawDatas/IGS_ZPD_SHAO/SHAO' + doy + '0.' + str(year - 2000) + 'zpd'
 
     with open(openfile, 'r') as f_gps:
-        n = 0
         for line in f_gps:
             if '+TROP/SOLUTION' in line:
                 break
-            n += 1
-        for line in f_gps.readlines()[n+2:]:
+        alldata = f_gps.readlines()[1:]
+        for line in alldata:
             if '-TROP/SOLUTION' in line:
                 break
             Arr = line.strip().split()
@@ -72,7 +71,28 @@ def t2s(t: str):
 def ymd2doy(year, month, day):
     return (datetime(year, month, day) - datetime(year, 1, 1)).days + 1
 
+# for all
 def DrawTogether(date: str):
+    plt.cla()
+
+    p1, = plt.plot(WVR_time,WVR_ZTD,'#fdae61',label='WVR')
+    p2, = plt.plot(GPS_time,GPS_ZTD,'#2b83ba',label='GPS')
+    p3 = plt.scatter(RT_time,RT_ZTD,color='#abdda4',label='RT',marker='^')
+
+    plt.title('GPS & WVR & RT comparison on '\
+         + date[:4] + '-' + date[4:6] + '-' + date[6:], fontdict={'weight': 'semibold'})
+
+    plt.ylabel('Total zenith path delay (mm)', fontdict={'weight': 'medium'})
+    plt.xlabel('time', fontdict={'weight': 'medium'})
+
+    plt.legend()
+    
+    plt.savefig('../Estimate/WVR_vs_GPS_vs_RT/'+date+'.png')
+
+    plt.close('all')
+
+# for 20180122
+""" def DrawTogether(date: str):
     plt.cla()
 
     p1, = plt.plot(WVR_time,WVR_ZTD,'#fdae61',label='WVR')
@@ -135,7 +155,52 @@ def DrawTogether(date: str):
 
     plt.savefig('../Estimate/WVR_vs_GPS_vs_RT/'+date+'.png', dpi = 1500)
 
-    plt.close('all')
+    plt.close('all') """
+
+# for 20180121
+""" def DrawTogether(date: str):
+    plt.cla()
+
+    p1, = plt.plot(WVR_time,WVR_ZTD,'#fdae61',label='WVR')
+    p2, = plt.plot(GPS_time,GPS_ZTD,'#2b83ba',label='GPS')
+    p3 = plt.scatter(RT_time,RT_ZTD,color='#abdda4',label='RT',marker='^')
+
+    plt.title('GPS & WVR & RT comparison on '\
+         + date[:4] + '-' + date[4:6] + '-' + date[6:], fontdict={'weight': 'semibold'})
+
+    plt.ylabel('Total zenith path delay (mm)', fontdict={'weight': 'medium'})
+    plt.xlabel('time', fontdict={'weight': 'medium'})
+
+    plt.xlim(0, 86400)
+    plt.ylim(2100,3100)
+
+    plt.xticks([0, 21600, 43200, 64800, 86400],
+          ['0:00', '6:00', '12:00', '18:00', '24:00'])
+    plt.gca().xaxis.set_minor_locator(AutoMinorLocator(6))
+    plt.gca().yaxis.set_minor_locator(AutoMinorLocator(5))
+    plt.tick_params(which='both', direction='in')
+
+    bottom = 2175
+    height = 50
+    rect1 = mp.Rectangle((0, bottom), 27000, height, edgecolor='black', facecolor='w', alpha=0.5, label='fair')
+    rect2 = mp.Rectangle((27000, bottom), 5400, height, edgecolor='black', facecolor='#eff3ff', alpha=0.5, label='Partly Cloudy')
+    rect3 = mp.Rectangle((32400, bottom), 9000, height, edgecolor='black', facecolor='#6baed6', alpha=0.5, label='Mostly Cloudy')
+    rect4 = mp.Rectangle((41400, bottom), 14400, height, edgecolor='black', facecolor='#bdd7e7', alpha=0.5, label='Cloudy')
+    rect5 = mp.Rectangle((55800, bottom), 30600, height, edgecolor='black', facecolor='#2171b5', alpha=0.5, label='Light Rain')
+
+    r1 = plt.gca().add_patch(rect1)
+    r2 = plt.gca().add_patch(rect2)
+    r3 = plt.gca().add_patch(rect3)
+    r4 = plt.gca().add_patch(rect4)
+    r5 = plt.gca().add_patch(rect5)
+
+    l1 = plt.legend(handles=[p1,p2,p3], labels=['WVR','GPS','RT'], loc='upper left', bbox_to_anchor=(0.31,1))
+    plt.legend(handles=[r5,r3,r4,r2,r1], labels=['Light Rain','Mostly Cloudy', 'Cloudy', 'Partly Cloudy', 'Fair'], loc='upper left')
+    plt.gca().add_artist(l1)
+
+    plt.savefig('../Estimate/WVR_vs_GPS_vs_RT/'+date+'.png', dpi = 1500)
+
+    plt.close('all') """
 
 def ShowDif(date: str):
     wgt = []
@@ -175,8 +240,8 @@ if __name__ == '__main__':
 
     data_year = '2018'
     data_month = '01'
-    data_day_start = '22'
-    data_day_end = '22'
+    data_day_start = '23'
+    data_day_end = '26'
 
     date_records = os.listdir(path)
 
