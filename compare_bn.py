@@ -31,7 +31,7 @@ def Mutiwork(Team: tuple) -> float:
     a5 = c_double(Team[2])
     a6 = c_double(Team[3])
     a7 = c_double(Team[4])
-    a8 = c_double(0)
+    a8 = c_double(0.0492)
     lv = dll.Lv(a1, a2, a3, a4, a5, a6, a7, a8)
     return lv
 
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     WVR_P0 = []
     WVR_e = []      # 相对湿度
 
-    file = '../RawDatas/WVR_raw_data/20180217/SH_FSJ_D1802170004.txt'
+    file = '../RawDatas/WVR_raw_data/20180121/SH_FSJ_D1801210004.txt'
     with open(file,'r',encoding='gbk') as f_wvr:
         read = False
         for line in f_wvr:
@@ -95,13 +95,17 @@ if __name__ == '__main__':
 
     plt.plot(WVR_time,WVR_Lv,label='WVR_calculates')
     plt.plot(WVR_time,WVR_ZWD,label='WVR_products')
-    plt.title('products-calculates date:181101')
+    plt.title('products-calculates date:180121')
     plt.ylabel('Zenith wet path delay(mm)')
     plt.xlabel('time(s)')
+    plt.xlim(0, 86400)
+    plt.xticks([21600, 43200, 64800],
+          ['6:00', '12:00', '18:00'])
+    plt.tick_params(which='both', direction='in')
     plt.legend()
-    plt.savefig('prod_vs_cal/180217_cruz.png') 
+    plt.savefig('prod_vs_cal/180121_cruz492.png', dpi=1500) 
 
-    with open('prod_vs_cal/180217_cruz.txt','w') as f_out:
+    with open('prod_vs_cal/180121_cruz492.txt','w') as f_out:
         for i in WVR_Lv:
             f_out.write(str(i) + '\n')
     f_out.close()
