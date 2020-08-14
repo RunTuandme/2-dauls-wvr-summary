@@ -51,7 +51,6 @@ def ReadGPSFile(filename: str = None):
             Arr = line.strip().split()
             GPS_time.append(float(Arr[1][-5:]))
             GPS_ZTD.append(float(Arr[2]))
-    f_gps.close()
 
 def ReadRTFile(filename: str = None):
     openfile = '../Estimate/spa_result/' + filename + '.txt'

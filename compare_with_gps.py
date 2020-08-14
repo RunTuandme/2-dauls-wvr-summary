@@ -1,27 +1,33 @@
 import os
-from datetime import datetime
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from numpy import mean
+from datetime import datetime,timedelta
+from matplotlib.ticker import AutoMinorLocator
+import wreader
+
+WVR_time = []
+WVR_ZTD = []        # 干延迟(m)
+GPS_time = []
+GPS_ZTD = []
+
+def datelist(start: str,end: str) -> list:
+    date_list = [] 
+    begin_date = datetime.strptime(start, r"%Y%m%d") 
+    end_date = datetime.strptime(end,r"%Y%m%d") 
+    while begin_date <= end_date: 
+        date_str = begin_date.strftime(r"%Y%m%d") 
+        date_list.append(date_str) 
+        # 日期加法days=1 months=1等等
+        begin_date += timedelta(days=1) 
+    return date_list
 
 def ReadWVRFile(filename: str = None):
-    read = False
-    with open(filename, 'r') as f_wvr:
-        for line in f_wvr:
-            if line in ['\n','\r\n']:
-                pass
-            else:
-                Arr = line.strip().split()
-                if len(Arr[0]) > 4:
-                    if ':' in Arr[3]:
-                        del Arr[:2]
-                    if Arr[0][:3] == '201':
-                        WVR_time.append(t2s(Arr[1]))
-                        WVR_ZTD.append(float(Arr[4]) * 1e3)
-                        read = True
-    f_wvr.close()
-    if not read:
-        return
+    filein = wreader.wvrfile(filename)
+    global WVR_time 
+    global WVR_ZTD
+    WVR_time = filein.Time()
+    WVR_ZTD = filein.ZTD()
 
 def ReadGPSFile(filename: str = None):
     year = int(filename[2:4]) + 2000
@@ -36,22 +42,26 @@ def ReadGPSFile(filename: str = None):
     else:
         doy = str(doy)
 
-    openfile = 'IGS_ZPD_SHAO/SHAO' + doy + '0.' + str(year - 2000) + 'zpd'
+    openfile = '../RawDatas/IGS_ZPD_SHAO/SHAO' + doy + '0.' + str(year - 2000) + 'zpd'
 
+    gt = []
+    gz = []
     with open(openfile, 'r') as f_gps:
-        n = 0
         for line in f_gps:
             if '+TROP/SOLUTION' in line:
                 break
-            n += 1
-        for line in f_gps.readlines()[n+2:]:
+        alldata = f_gps.readlines()[1:]
+        for line in alldata:
             if '-TROP/SOLUTION' in line:
                 break
             Arr = line.strip().split()
-            GPS_time.append(float(Arr[1][-5:]))
-            GPS_ZTD.append(float(Arr[2]))
-    f_gps.close()
+            gt.append(float(Arr[1][-5:]))
+            gz.append(float(Arr[2]))
 
+    global GPS_time
+    global GPS_ZTD
+    GPS_time = gt
+    GPS_ZTD = gz
 
 def t2s(t: str):
     h,m,s = t.strip().split(":")
@@ -62,13 +72,18 @@ def ymd2doy(year, month, day):
 
 def DrawTogether(date: str):
     plt.cla()
-    plt.plot(WVR_time,WVR_ZTD,'r',label='WVR')
-    plt.plot(GPS_time,GPS_ZTD,'b',label='GPS')
+    plt.plot(WVR_time,WVR_ZTD,label='WVR')
+    plt.plot(GPS_time,GPS_ZTD,label='GPS')
     plt.title(date +' GPS & WVR')
     plt.ylabel('Total zenith path delay(mm)')
     plt.xlabel('time(s)')
+    plt.xlim(0, 86400)
+    plt.xticks([0, 21600, 43200, 64800, 86400],
+          ['0:00', '6:00', '12:00', '18:00', '24:00'])
+    plt.gca().xaxis.set_minor_locator(AutoMinorLocator(6))
+    plt.tick_params(which='both', direction='in')
     plt.legend()
-    plt.savefig('WVR_vs_GPS/'+date+'.png')
+    plt.savefig('../Estimate/WVR_vs_GPS/'+date+'.png', dpi=500)
     plt.close('all')
 
 def ShowDif(date: str):
@@ -101,48 +116,31 @@ def RecordDif(date: str, dif: list):
         f_dif.write(date + '\t' + str(mdf) + '\n')
     f_dif.close()
 
+def Run(ds: str, de: str):
+
+    date_path = "../RawDatas/WVR_raw_data"
+    date_dir = os.listdir(date_path)
+
+    for date in tqdm(datelist(ds, de)):
+        if date not in date_dir:
+            print('Can\'t find ' + i + ' file!')
+            continue
+        filepath = date_path + '/' + date
+        files = os.listdir(filepath)
+        for i in files:
+            if os.path.splitext(i)[1] == ".txt":
+                try:
+                    ReadWVRFile(filepath + '/' + i)
+                    ReadGPSFile(date)
+                    DrawTogether(date)
+                    #ShowDif(date)
+                except:
+                    print('Something wrong with ' + date + ' file!')
+                    pass
+
 if __name__ == '__main__':
 
-    filelist = []
+    ds = '20190101'    # 起
+    de = '20191230'    # 止
 
-    path = "../WVR_raw_data"
-
-    data_year = '2018'
-    data_month = '10'
-    data_day_start = '01'
-    data_day_end = '31'
-
-    date_records = os.listdir(path)
-
-    # -----打开 WVR 文件 ----- #
-    ds = int(data_day_start)
-    de = int(data_day_end)
-    dd = ds
-
-    while dd <= de:
-        if dd < 10:
-            date = data_year + data_month + '0' + str(dd)
-        else:
-            date = data_year + data_month + str(dd)
-
-        if date in date_records:
-            print ('Now is dealing with: ' + date + '...')
-
-            filepath = path + '/' + date
-            files = os.listdir(filepath)
-
-            for i in files:
-                if os.path.splitext(i)[1] == ".txt":
-                    WVR_time = []
-                    WVR_ZTD = []        # 干延迟(m)
-                    GPS_time = []
-                    GPS_ZTD = []
-                    try:
-                        ReadWVRFile(filepath + '/' + i)
-                        ReadGPSFile(date)
-                        DrawTogether(date)
-                        ShowDif(date)
-                    except:
-                        print('Can\'t find ' + date + ' file!')
-                        pass
-        dd += 1
+    Run(ds, de)

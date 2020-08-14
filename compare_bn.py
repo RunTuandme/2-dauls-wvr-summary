@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import os
 from multiprocessing import Pool
 from ctypes import *
+import datetime
 
 dll = CDLL('zwd.dll')             # windows版
 # dll = CDLL('libzwd.so')             # linux版
@@ -35,7 +36,7 @@ def Mutiwork(Team: tuple) -> float:
     lv = dll.Lv(a1, a2, a3, a4, a5, a6, a7, a8)
     return lv
 
-if __name__ == '__main__':
+def Run(date: str):
 
     WVR_time = []
     WVR_ZWD = []
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     WVR_P0 = []
     WVR_e = []      # 相对湿度
 
-    file = '../RawDatas/WVR_raw_data/20180121/SH_FSJ_D1801210004.txt'
+    file = '../RawDatas/WVR_raw_data/20' + date + '/SH_FSJ_D' + date + '0004.txt'
     with open(file,'r',encoding='gbk') as f_wvr:
         read = False
         for line in f_wvr:
@@ -67,7 +68,6 @@ if __name__ == '__main__':
                         read = True
         if not read:
             pass
-    f_wvr.close()
 
     WVR_tau1 = [tau(a, b) for a,b in zip(WVR_Tb1, WVR_T0)]
     WVR_tau2 = [tau(a, b) for a,b in zip(WVR_Tb2, WVR_T0)]
@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
     plt.plot(WVR_time,WVR_Lv,label='WVR_calculates')
     plt.plot(WVR_time,WVR_ZWD,label='WVR_products')
-    plt.title('products-calculates date:180121')
+    plt.title('products-calculates date:' + date)
     plt.ylabel('Zenith wet path delay(mm)')
     plt.xlabel('time(s)')
     plt.xlim(0, 86400)
@@ -103,9 +103,31 @@ if __name__ == '__main__':
           ['6:00', '12:00', '18:00'])
     plt.tick_params(which='both', direction='in')
     plt.legend()
-    plt.savefig('prod_vs_cal/180121_cruz492.png', dpi=1500) 
+    plt.savefig('../Estimate/prod_vs_cal/'+date+'_cruz.png', dpi=1500) 
 
-    with open('prod_vs_cal/180121_cruz492.txt','w') as f_out:
+    with open('../Estimate/prod_vs_cal/'+date+'_cruz.txt','w') as f_out:
         for i in WVR_Lv:
             f_out.write(str(i) + '\n')
-    f_out.close()
+
+def dateRange(beginDate, endDate):
+    dates = []
+    dt = datetime.datetime.strptime(beginDate, "%Y%m%d")
+    date = beginDate[:]
+    while date <= endDate:
+        dates.append(date)
+        dt = dt + datetime.timedelta(1)
+        date = dt.strftime("%Y%m%d")
+    return dates
+
+if __name__ == '__main__':
+
+    date_start = '20180501'
+    date_end = '20180531'
+
+    import time
+
+    for dt in dateRange(date_start, date_end):
+
+        print ('---> Now is dealing with: '+str(dt))
+        Run(dt[2:])
+        time.sleep(15)
