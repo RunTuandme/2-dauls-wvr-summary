@@ -264,7 +264,7 @@ if __name__ == '__main__':
             for i in files:
                 if os.path.splitext(i)[1] == ".txt":
                     WVR_time = []
-                    WVR_ZTD = []        # 干延迟(m)
+                    WVR_ZTD = []        # 总延迟(m)
                     GPS_time = []
                     GPS_ZTD = []
                     RT_time = (0, 10800, 21600, 32400, 43200, 54000, 64800, 75600)

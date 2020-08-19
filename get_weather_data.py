@@ -12,23 +12,21 @@ import os
 
 def GetData(website: str, savepath: str):
  
-    # 打开chrome浏览器（需提前安装好chromedriver）
-    chrome_options=Options()
-    chrome_options.add_argument('--headless')           # 无界面浏览
-    browser = webdriver.Chrome(options=chrome_options)
-    # browser = webdriver.PhantomJS()
-    print("--> Opening the web page...")
     browser.get(website)
 
     print("--> Waiting for web page response...")
     # 需要等一下，直到带有aria-label属性且值为table of contents的表格加载完成
     wait = WebDriverWait(browser, 30)
+    #try:
     wait.until(EC.presence_of_element_located((By.XPATH, "//table[@aria-label='table of contents']")))
     sleep(2)
+    """ except:
+        print('Warning: Timeout!\n--> Reopening the web page...')
+        GetData(website, savepath) """
     
     print("--> Fetching web page data...")
     soup = BeautifulSoup(browser.page_source, "lxml")
-    browser.close()
+    
     dh = soup.find_all("table",attrs={"aria-label":"table of contents"})
     data_colhead = dh[0].find_all('button')     # 表头
     data_rows = dh[0].find_all('span')          # 表内容
@@ -52,6 +50,7 @@ def GetData(website: str, savepath: str):
             count = 1
             temp = []
             temp.append(i)
+    final.append(temp)
             
     datalist = final
 
@@ -97,10 +96,19 @@ if __name__ == '__main__':
 
     from tqdm import tqdm
     savepath = '../RawDatas/weather_data/'
-    a = tqdm(datelist('2015-9-1', '2020-3-1'))
+    a = tqdm(datelist('2015-8-1', '2020-3-1'))
+
+    # 打开chrome浏览器（需提前安装好chromedriver）
+    chrome_options=Options()
+    chrome_options.add_argument('--headless --ignore-certificate-errors')           # 无界面浏览
+    browser = webdriver.Chrome(options=chrome_options)
+    # browser = webdriver.PhantomJS()
+    print("--> Opening the web page...")
 
     for i in a:
         if os.path.exists(savepath + i + '.csv'):
             print (i + '.csv has already existed, continue...')
             continue
         GetData("https://www.wunderground.com/history/daily/cn/shanghai/ZSSS/date/" + i, savepath + i + '.csv')
+
+    browser.close()

@@ -7,7 +7,7 @@ from matplotlib.ticker import AutoMinorLocator
 import wreader
 
 WVR_time = []
-WVR_ZTD = []        # 干延迟(m)
+WVR_ZTD = []        # 总延迟(m)
 GPS_time = []
 GPS_ZTD = []
 
