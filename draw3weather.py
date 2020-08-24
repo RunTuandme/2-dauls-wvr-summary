@@ -12,6 +12,7 @@ import matplotlib.patches as mp
 import wreader
 import pandas as pd
 import importlib
+import numpy as np
 
 WVR_time = []
 WVR_ZTD = []        # 总延迟(m)
@@ -20,6 +21,9 @@ GPS_ZTD = []
 RT_time = (0, 10800, 21600, 32400, 43200, 54000, 64800, 75600)
 RT_ZTD = []
 Weather_Condition = []
+WVR_T = []
+WVR_RHO = []
+WVR_P = []
 
 def datelist(start: str,end: str) -> list:
     date_list = [] 
@@ -36,8 +40,14 @@ def ReadWVRFile(filename: str = None):
     filein = wreader.wvrfile(filename)
     global WVR_time 
     global WVR_ZTD
+    global WVR_P
+    global WVR_RHO
+    global WVR_T
     WVR_time = filein.Time()
     WVR_ZTD = filein.ZTD()
+    WVR_T = filein.T0()
+    WVR_RHO = filein.e()
+    WVR_P = filein.P0()
 
 def ReadGPSFile(filename: str = None):
     year = int(filename[2:4]) + 2000
@@ -157,23 +167,26 @@ def BlueColors(num: int) -> list:
 def DrawTogether(date: str):
     plt.cla()
 
-    p1, = plt.plot(WVR_time,WVR_ZTD,'#fdae61',label='WVR')
-    p2, = plt.plot(GPS_time,GPS_ZTD,'#2b83ba',label='GPS')
-    p3 = plt.scatter(RT_time,RT_ZTD,color='#abdda4',label='RT',marker='^')
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
 
-    plt.title('GPS & WVR & RT comparison on '\
+    p1, = ax1.plot(WVR_time,WVR_ZTD,'#fdae61',label='WVR')
+    p2, = ax1.plot(GPS_time,GPS_ZTD,'#2b83ba',label='GPS')
+    p3  = ax1.scatter(RT_time,RT_ZTD,color='#abdda4',label='RT',marker='^')
+
+    ax1.set_title('GPS & WVR & RT comparison on '\
          + date[:4] + '-' + date[4:6] + '-' + date[6:], fontdict={'weight': 'semibold'})
     
-    plt.ylabel('Total zenith path delay(mm)')
-    plt.xlabel('time(s)')
-    plt.xlim(0, 86400)
+    ax1.set_ylabel('Total zenith path delay(mm)')
+    ax1.set_xlabel('time(s)')
+    ax1.set_xlim(0, 86400)
     ymin = min(min(WVR_ZTD),min(GPS_ZTD),min(RT_ZTD))
     ymax = max(max(WVR_ZTD),max(GPS_ZTD),max(RT_ZTD))
-    plt.ylim(ymin-240, ymax+100)
-    plt.xticks([0, 21600, 43200, 64800, 86400],
-          ['0:00', '6:00', '12:00', '18:00', '24:00'])
-    plt.gca().xaxis.set_minor_locator(AutoMinorLocator(6))
-    plt.tick_params(which='both', direction='in')
+    ax1.set_ylim(ymin-240, ymax+100)
+    ax1.set_xticks([0, 21600, 43200, 64800, 86400])
+    ax1.set_xticklabels(['0:00', '6:00', '12:00', '18:00', '24:00'])
+    ax1.xaxis.set_minor_locator(AutoMinorLocator(6))
+    ax1.tick_params(which='both', direction='in')
 
     bottom = ymin - 215
     height = 50
@@ -190,24 +203,24 @@ def DrawTogether(date: str):
             facecolor=weather_color(i[1]), alpha=0.5, label=i[1])
         start += i[0] * 1800
         if i[1] not in typen:
-            r_type.append(plt.gca().add_patch(rect_object))
+            r_type.append(ax1.add_patch(rect_object))
             r_type_name.append(i[1])
             typen.append(i[1])
         else:
-            plt.gca().add_patch(rect_object)
+            ax1.add_patch(rect_object)
 
-    box = plt.gca().get_position()
-    plt.gca().set_position([box.x0, box.y0, box.width* 0.8, box.height])
+    box1 = ax1.get_position()
+    ax1.set_position([box1.x0, box1.y0, box1.width* 0.8, box1.height])
 
-    l1 = plt.legend(handles=[p1,p2,p3], labels=['WVR','GPS','RT'], loc='best')
-    plt.legend(handles=r_type, labels=r_type_name, loc='upper left', bbox_to_anchor=(1, 1))
-    plt.gca().add_artist(l1)
+    l1 = ax1.legend(handles=[p1,p2,p3], labels=['WVR','GPS','RT'], loc='best')
+    ax1.legend(handles=r_type, labels=r_type_name, loc='upper left', bbox_to_anchor=(1, 1))
+    ax1.add_artist(l1)
     # plt.legend(loc='best', ncol= 2)
 
-    plt.gca().spines['top'].set_linewidth(1.5)
-    plt.gca().spines['bottom'].set_linewidth(1.5)
-    plt.gca().spines['left'].set_linewidth(1.5)
-    plt.gca().spines['right'].set_linewidth(1.5)
+    ax1.spines['top'].set_linewidth(1.5)
+    ax1.spines['bottom'].set_linewidth(1.5)
+    ax1.spines['left'].set_linewidth(1.5)
+    ax1.spines['right'].set_linewidth(1.5)
 
     plt.savefig('../Estimate/3vs_weather/'+date+'.png', dpi=500)
     plt.close('all')
@@ -244,6 +257,6 @@ def Run(ds: str, de: str):
 if __name__ == '__main__':
 
     ds = '20180101'    # 起
-    de = '20180130'    # 止
+    de = '20180101'    # 止
 
     Run(ds, de)

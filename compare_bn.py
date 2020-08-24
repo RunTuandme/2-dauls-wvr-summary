@@ -93,6 +93,7 @@ def Run(date: str):
     for i in ms:
         WVR_Lv.append(i.get())   # 注意：获取返回值get()方法一定要在进程池回收之后进行，否则进程阻塞。无法并行。
 
+    plt.cla()
     plt.plot(WVR_time,WVR_Lv,label='WVR_calculates')
     plt.plot(WVR_time,WVR_ZWD,label='WVR_products')
     plt.title('products-calculates date:' + date)
@@ -104,6 +105,7 @@ def Run(date: str):
     plt.tick_params(which='both', direction='in')
     plt.legend()
     plt.savefig('../Estimate/prod_vs_cal/'+date+'_cruz.png', dpi=1500) 
+    plt.close('all')
 
     with open('../Estimate/prod_vs_cal/'+date+'_cruz.txt','w') as f_out:
         for i in WVR_Lv:
