@@ -40,16 +40,11 @@ def GetData(website: str, savepath: str):
             
     final = []
     temp = []
-    count = 0
     for i in datalist:
-        if count < 17:
-            temp.append(i)
-            count += 1
-        else:
+        if ('AM' in i or 'PM' in i) and temp:
             final.append(temp)
-            count = 1
             temp = []
-            temp.append(i)
+        temp.append(i)
     final.append(temp)
             
     datalist = final
@@ -57,16 +52,22 @@ def GetData(website: str, savepath: str):
     new_block = []
     final = []
     for i in datalist:
-        new_block.append(i[0])
-        new_block.append(i[1]+i[2])
-        new_block.append(i[3]+i[4])
-        new_block.append(i[5]+i[6])
-        new_block.append(i[7])
-        new_block.append(i[8]+i[9])
-        new_block.append(i[10]+i[11])
-        new_block.append(i[12]+i[13])
-        new_block.append(i[14]+i[15])
-        new_block.append(i[16])
+        if len(i) < 17:
+            new_block.append(i[0])
+            for null in range(8):
+                new_block.append('NULL')
+            new_block.append(i[-1])
+        else:        
+            new_block.append(i[0])
+            new_block.append(i[1]+i[2])
+            new_block.append(i[3]+i[4])
+            new_block.append(i[5]+i[6])
+            new_block.append(i[7])
+            new_block.append(i[8]+i[9])
+            new_block.append(i[10]+i[11])
+            new_block.append(i[12]+i[13])
+            new_block.append(i[14]+i[15])
+            new_block.append(i[16])
         final.append(new_block)
         new_block = []
         
@@ -96,7 +97,7 @@ if __name__ == '__main__':
 
     from tqdm import tqdm
     savepath = '../RawDatas/weather_data/'
-    a = tqdm(datelist('2015-8-1', '2020-3-1'))
+    a = tqdm(datelist('2017-7-25', '2017-7-25'))
 
     # 打开chrome浏览器（需提前安装好chromedriver）
     chrome_options=Options()

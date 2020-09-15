@@ -3,9 +3,9 @@ class wvrfile:
     
     def __init__(self, file_path: str):
         self.fp = file_path
+        self.datelist = []
         self.JudgeFile()
-        self.datelist = self.date()
-
+        
     def ReadAndGet(self, mode: str = 'NULL') -> list:
         if mode == 'NULL':
             raise ValueError('Missing mode parameters.')
@@ -109,6 +109,7 @@ class wvrfile:
         try:
             fopen = open(self.fp,'r',encoding='gbk')
             fopen.close()
+            self.datelist = self.date()
         except:
             print('Can\'t find ' + self.fp)
 

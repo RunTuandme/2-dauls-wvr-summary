@@ -51,7 +51,7 @@ $
 </center>
 
 
-由大气微波辐射方程可得到，
+SHAO 测站的WVR采用Marco反演技术对路径湿延迟进行反演。下面展示对该技术的简要推导，由大气微波辐射方程可得到，
 <center>
 
 $
@@ -59,7 +59,21 @@ $
 $
 </center>
 
-式中，$T_m$为大气平均辐射温度。
+式中，$T_m$为大气平均辐射温度。它的定义表示为：
+<center>
+
+$
+T_m = \dfrac{\displaystyle\int_{h_0}^{\infty}\frac{e}{T}dh}{\displaystyle\int_{h_0}^{\infty}\frac{e}{T^2}dh}
+$
+</center>
+可由地面大气温度采用经验模型计算。如Bevis等利用多年探空仪资料计算发现, Tm
+与地面温度Ts(K)的线性关系为:
+<center>
+
+$
+T_m=0.72\times T_0+70.2
+$
+</center>
 
 对于双通道水汽辐射计，假定通道频率为$f_1$、$f_2$，对应大气吸收系数分别为$\alpha_1$、$\alpha_2$，则对应的大气不透明度$\tau_1$、$\tau_2$可写为：
 <center>
@@ -144,3 +158,12 @@ $
 </center>
 
 $T_{B_1}$、$T_{B_1}$分别为两个通道的亮温度。
+
+## 数据来源
+实验数据来源于上海SHAO 站附近的WVR仪器从2015年8月到2020年3月的测量数据，并下载了SHAO igs测站的对流层延迟产品，以及spd，并使用wunderground气象网站（https://www.wunderground.com）的天气数据作为参考。
+
+## 数据对比分析
+
+## 误差原因分析和讨论
+
+## 结束语

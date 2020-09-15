@@ -283,7 +283,8 @@ def DrawTogether(date: str):
 
     plt.subplots_adjust(left=0.115,bottom=0.05,top=0.95,right=0.8,hspace=0)
 
-    plt.savefig('../Estimate/3vs_trhop/'+date+'.png', dpi=500)
+    plt.show()
+    #plt.savefig('../Estimate/3vs_trhop/'+date+'.png', dpi=500)
     plt.close('all')
 
 def SwitchDate(date: str) -> str:
@@ -292,32 +293,39 @@ def SwitchDate(date: str) -> str:
     day = str(int(date[6:]))
     return year + '-' + month + '-' + day
 
-def Run(ds: str, de: str):
+def Run(path: str, date: str):
+    try:
+        ReadWVRFile(path)
+        ReadGPSFile(date)
+        ReadRTFile(date)
+        ReadWeatherFile(SwitchDate(date))
+        DrawTogether(date)
+    except:
+        print('Something wrong with ' + date + ' file!')
+        pass
+
+if __name__ == '__main__':
+
+    ds = '20160101'    # 起
+    de = '20160101'    # 止
+
+    """ from multiprocessing import Pool
+
+    p = Pool()
+    pbar = tqdm(len(datelist(ds, de)))
+    def Update(*a):
+        pbar.update() """
 
     date_path = "../RawDatas/WVR_raw_data"
     date_dir = os.listdir(date_path)
 
     for date in tqdm(datelist(ds, de)):
         if date not in date_dir:
-            print('Can\'t find ' + i + ' file!')
+            print('Can\'t find ' + date + ' file!')
             continue
         filepath = date_path + '/' + date
         files = os.listdir(filepath)
         for i in files:
             if os.path.splitext(i)[1] == ".txt":
-                try:
-                    ReadWVRFile(filepath + '/' + i)
-                    ReadGPSFile(date)
-                    ReadRTFile(date)
-                    ReadWeatherFile(SwitchDate(date))
-                    DrawTogether(date)
-                except:
-                    print('Something wrong with ' + date + ' file!')
-                    pass
-
-if __name__ == '__main__':
-
-    ds = '20180101'    # 起
-    de = '20180130'    # 止
-
-    Run(ds, de)
+                Run(filepath + '/' + i, date)
+                #p.apply_async(Run, args=(filepath + '/' + i, date,), callback=Update)
