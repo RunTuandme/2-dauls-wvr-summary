@@ -10,6 +10,7 @@
 + ~~氧气吸收系数曲线疑似不准确~~
 
 ## To do list
-+ 写一个读取WVR、GPS文档的class <img src='img/completed.ico' width='5%'>
-+ 爬取天气网站的脚本 <img src='img/completed.ico' width='5%'>
-+ 统计所有gps数据的滑动窗口方差，确定取值范围
++ 写一个读取WVR、GPS文档的class <img src='img/completed.ico' width='3%'>
++ 爬取天气网站的脚本 <img src='img/completed.ico' width='3%'>
++ 统计所有gps数据的滑动窗口rms，确定取值范围 <img src='img/completed.ico' width='3%'>
++ 由5年的wvr数据统计滑动窗口rms，剔除波动较大的数据
