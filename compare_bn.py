@@ -15,7 +15,7 @@ from multiprocessing import Pool
 from ctypes import *
 import datetime
 
-dll = CDLL('zwd.dll')             # windows版
+dll = CDLL('D:/work/TwoDaul/TwoDaul/two_daul/zwd.dll')             # windows版
 # dll = CDLL('libzwd.so')             # linux版
 dll.Lv.argtypes = [c_double] * 8    # 指定传入参数类型
 dll.Lv.restype = c_double           # 指定输出结果类型
@@ -105,6 +105,7 @@ def Run(date: str):
     plt.tick_params(which='both', direction='in')
     plt.legend()
     plt.savefig('../Estimate/prod_vs_cal/'+date+'_cruz.png', dpi=1500) 
+    #plt.show()
     plt.close('all')
 
     with open('../Estimate/prod_vs_cal/'+date+'_cruz.txt','w') as f_out:
@@ -123,8 +124,8 @@ def dateRange(beginDate, endDate):
 
 if __name__ == '__main__':
 
-    date_start = '20180501'
-    date_end = '20180531'
+    date_start = '20180401'
+    date_end = '20180401'
 
     import time
 

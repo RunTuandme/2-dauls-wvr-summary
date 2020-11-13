@@ -1,5 +1,5 @@
-from gpsfname import get_gps_file
-from gpspd import gpsfile_to_df
+from wvrfname import get_wvr_file
+from wvrpd import wvrfile_to_df
 from datelist import datelist
 import numpy as np
 import pandas as pd
@@ -28,15 +28,19 @@ if __name__ == '__main__':
     for date in tqdm(datelist(ds, de)):
         
         try:
-            gpsfile = get_gps_file(date)
-            gpd_df = gpsfile_to_df(gpsfile)
+            wvrfile = get_wvr_file(date)
+            wvr_df = wvrfile_to_df(wvrfile)
         except:
             print(date + ' file wrong')
             continue
 
-        total_delay = gpd_df['TROTOT']
-        var_list = win_var(6, total_delay)
+        total_delay = wvr_df['总延迟(m)']
+        try:
+            var_list = win_var(3600, total_delay)
+        except:
+            print(date + ' file lack of data')
+            continue
 
         top_varlist =  pd.Series(var_list)
         btm_stats = top_varlist.describe()
-        pd.concat([top_varlist, btm_stats]).to_frame().to_csv('../Estimate/variance_stat/gps/' + date + '.csv' )
+        pd.concat([top_varlist, btm_stats]).to_frame().to_csv('../Estimate/variance_stat/wvr/' + date + '.csv' )
